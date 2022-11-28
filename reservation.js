@@ -1,2 +1,2 @@
-const member="bugDigger2"
+const member="bugDigger1"
 console.log(member)
