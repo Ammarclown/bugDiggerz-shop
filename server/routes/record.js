@@ -14,12 +14,13 @@ const ObjectId = require("mongodb").ObjectId;
  
 // This section will help you get a list of all the records.
 recordRoutes.route("/record").get(function (req, res) {
- let db_connect = dbo.getDb("employees");
+ let db_connect = dbo.getDb("worldcup22");
  db_connect
-   .collection("records")
+   .collection("Reservations")
    .find({})
    .toArray(function (err, result) {
      if (err) throw err;
+     console.log("get request in record")
      res.json(result);
    });
 });
@@ -71,14 +72,52 @@ recordRoutes.route("/update/:id").post(function (req, response) {
 });
  
 // This section will help you delete a record
-recordRoutes.route("/:id").delete((req, response) => {
- let db_connect = dbo.getDb();
- let myquery = { _id: ObjectId(req.params.id) };
- db_connect.collection("records").deleteOne(myquery, function (err, obj) {
-   if (err) throw err;
-   console.log("1 document deleted");
-   response.json(obj);
+//RESERVATION ROUTES
+//POST TICKET
+/*recordRoutes.route("/reserve").post(function (req, response) {
+  let db_connect = dbo.getDb("worldcup22");
+  let myobj = {
+     ticketNo:req.body.ticketNo,
+     price:req.body.price,
+     quantity:req.body.quantity,
+     description:req.body.description,
+     location:req.body.location,
+     paymentMethod:req.body.paymentMethod,
+     paymentConfirmed:"false",
+  };
+
+  db_connect.collection("Reservations").insertOne(myobj, function (err, res) {
+    if (err) throw err;
+    response.json(res);
+  });
  });
-});
+ //UPDATE TICKET IF PAYMENT IS CONFIRMED
+ recordRoutes.route("/update/:id").patch(function (req, response) {
+  let db_connect = dbo.getDb("worldcup22");
+  let myquery = { _id: ObjectId(req.params.id) };
+  let newvalues = {
+    $set: {
+      paymentConfirmed:"true"
+    },
+  };
+  db_connect
+    .collection("Reservations")
+    .updateOne(myquery, newvalues, function (err, res) {
+      if (err) throw err;
+      console.log("1 document updated");
+      response.json(res);
+    });
+ });
+ //DELETE TICKET
+recordRoutes.route("/remove/:id").delete((req, response) => {
+  let db_connect = dbo.getDb("worldcup22");
+  let myquery = { _id: ObjectId(req.params.id) };
+  db_connect.collection("Reservations").deleteOne(myquery, function (err, obj) {
+    if (err) throw err;
+    console.log("1 document deleted");
+    response.json(obj);
+  });
+ });
+ */
  
 module.exports = recordRoutes;
