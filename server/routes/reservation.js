@@ -122,7 +122,7 @@ else {
 "availability.category3.price":195 };
 newvalues = {
   $inc: {
-   "availability.category3.count":-1
+   "availability.category3.count":increment
   },
 };
 }
