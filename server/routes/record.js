@@ -16,7 +16,7 @@ const ObjectId = require("mongodb").ObjectId;
 recordRoutes.route("/record").get(function (req, res) {
  let db_connect = dbo.getDb("worldcup22");
  db_connect
-   .collection("Reservations")
+   .collection("shopMasterlist")
    .find({})
    .toArray(function (err, result) {
      if (err) throw err;
@@ -52,18 +52,17 @@ recordRoutes.route("/record/add").post(function (req, response) {
 });
  
 // This section will help you update a record by id.
-recordRoutes.route("/update/:id").post(function (req, response) {
+recordRoutes.route("shop/update/:id").post(function (req, response) {
  let db_connect = dbo.getDb();
  let myquery = { _id: ObjectId(req.params.id) };
  let newvalues = {
    $set: {
-     name: req.body.name,
-     position: req.body.position,
-     level: req.body.level,
+     MatchNumber: req.body.MatchNumber,
+
    },
  };
  db_connect
-   .collection("records")
+   .collection("Shop")
    .updateOne(myquery, newvalues, function (err, res) {
      if (err) throw err;
      console.log("1 document updated");

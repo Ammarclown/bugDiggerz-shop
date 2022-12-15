@@ -41,23 +41,101 @@ reserveRoutes.route("/reserve").post(function (req, response) {
 });
  
 // This section will help you update a record by id.
-reserveRoutes.route("/update/:id").patch(function (req, response) {
+reserveRoutes.route("/update/:id/:cno/:capacity").patch(function (req, response) {
+  let decrement=Number(req.params.capacity)*-1
  let db_connect = dbo.getDb("worldcup22");
- let myquery = { _id: ObjectId(req.params.id) };
- let newvalues = {
-   $set: {
-     paymentConfirmed:"true"
-   },
- };
+ let myquery = { "_id": ObjectId(req.params.id),
+"availability.category1.price":75 };
+let newvalues = {
+  $inc: {
+   "availability.category1.count":decrement
+  },
+};
+if (Number(req.params.cno)==1){
+  myquery = { "_id": ObjectId(req.params.id),
+"availability.category1.price":75 };
+newvalues = {
+  $inc: {
+   "availability.category1.count":decrement
+  },
+};
+}
+else if(Number(req.params.cno)==2){
+  myquery = { "_id": ObjectId(req.params.id),
+"availability.category2.price":125 };
+newvalues = {
+  $inc: {
+   "availability.category2.count":decrement
+  },
+};
+}
+else {
+  myquery = { "_id": ObjectId(req.params.id),
+"availability.category3.price":195 };
+newvalues = {
+  $inc: {
+   "availability.category3.count":-1
+  },
+};
+}
+//console.log(Number(myquery._id.availability.category1.count))
+ 
  db_connect
-   .collection("Reservations")
+   .collection("shopMasterlist")
    .updateOne(myquery, newvalues, function (err, res) {
      if (err) throw err;
      console.log("1 document updated for reservation");
      response.json(res);
    });
 });
+ //ADD QUANTITY WHEN TICKET CANCELLED
+reserveRoutes.route("/cancel/:id/:cno/:capacity").patch(function (req, response) {
+  let increment=Number(req.params.capacity)
+ let db_connect = dbo.getDb("worldcup22");
+ let myquery = { "_id": ObjectId(req.params.id),
+"availability.category1.price":75 };
+let newvalues = {
+  $inc: {
+   "availability.category1.count":increment
+  },
+};
+if (Number(req.params.cno)==1){
+  myquery = { "_id": ObjectId(req.params.id),
+"availability.category1.price":75 };
+newvalues = {
+  $inc: {
+   "availability.category1.count":increment
+  },
+};
+}
+else if(Number(req.params.cno)==2){
+  myquery = { "_id": ObjectId(req.params.id),
+"availability.category2.price":125 };
+newvalues = {
+  $inc: {
+   "availability.category2.count":increment
+  },
+};
+}
+else {
+  myquery = { "_id": ObjectId(req.params.id),
+"availability.category3.price":195 };
+newvalues = {
+  $inc: {
+   "availability.category3.count":-1
+  },
+};
+}
+//console.log(Number(myquery._id.availability.category1.count))
  
+ db_connect
+   .collection("shopMasterlist")
+   .updateOne(myquery, newvalues, function (err, res) {
+     if (err) throw err;
+     console.log("1 document updated for reservation");
+     response.json(res);
+   });
+});
 // This section will help you delete a record
 reserveRoutes.route("/remove/:id").delete((req, response) => {
  let db_connect = dbo.getDb("worldcup22");
