@@ -1,13 +1,20 @@
 const express = require("express");
- 
+const dbo = require("../db/conn");
+const app = express();
+const cors = require("cors");
+require("dotenv").config({ path: "./config.env" });
+const port = 5000;
+app.use(cors());
+app.use(express.json());
+
 const rateLimit = require('express-rate-limit')
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /record.
 const reserveRoutes = express.Router();
- 
+app.use(reserveRoutes);
+
 // This will help us connect to the database
-const dbo = require("../db/conn");
 // This help convert the id from string to ObjectId for the _id.
 const ObjectId = require("mongodb").ObjectId;
 // This section will help you get a single record by id
@@ -305,5 +312,12 @@ reserveRoutes.route("/api/remove/:id").delete((req, response) => {
    response.json(obj);
  });
 });
+app.listen(port, () => {
+  // perform a database connection when server starts
+  dbo.connectToServer(function (err) {
+    if (err) console.error(err);
  
+  });
+  console.log(`Server is running on port: ${port}`);
+});
 module.exports = reserveRoutes;
