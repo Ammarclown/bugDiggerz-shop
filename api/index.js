@@ -37,15 +37,16 @@ reserveRoutes.route("/api/record/:id").get(function (req, res) {
    });
 });
 reserveRoutes.route("/api/records").get(function (req, res) {
-  let db_connect = dbo.getDb("worldcup22");
-  db_connect
-    .collection("shopMasterlist")
-    .find({})
-    .toArray(function (err, result) {
-      if (err) throw err;
-      console.log("get request in record")
-      res.json(result);
-    });
+  // let db_connect = dbo.getDb("worldcup22");
+  // db_connect
+  //   .collection("shopMasterlist")
+  //   .find({})
+  //   .toArray(function (err, result) {
+  //     if (err) throw err;
+  //     console.log("get request in record")
+  //     res.json(result);
+  //   });
+  res.send("problem in db")
  });
 // This section will help you create a new record.
 reserveRoutes.route("/api/matches").post(function (req, response) {
