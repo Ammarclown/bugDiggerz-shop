@@ -43,7 +43,7 @@ reserveRoutes.route("/api/record").get(function (req, res) {
     .find({})
     .toArray(function (err, result) {
       if (err) throw err;
-      //console.log("get request in record")
+      console.log("get request in record")
       res.json(result);
     });
  });
@@ -184,7 +184,7 @@ newvalues = {
    .collection("shopMasterlist")
    .updateOne(myquery, newvalues, function (err, res) {
      if (err) throw err;
-    // console.log("1 document updated for reservation");
+     console.log("1 document updated for reservation");
      response.json(res);
    });
 });
@@ -219,7 +219,7 @@ newvalues = {
 };
 }
 if(Number(req.params.cno)==1 && cat1< (pend1+inc)){
- // console.log("TICKET SOLDOUT IN CATEGORY 1")
+  console.log("TICKET SOLDOUT IN CATEGORY 1")
 }
 if(Number(req.params.cno)==2 && cat2>=pend2+inc){
   myquery = { "matchNumber": Number(req.params.matchNO),
@@ -231,7 +231,7 @@ newvalues = {
 };
 }
 if(Number(req.params.cno)==2 && cat2< (pend2+inc)){
-  //console.log("TICKET SOLDOUT IN CATEGORY 2")
+  console.log("TICKET SOLDOUT IN CATEGORY 2")
 }
 if(Number(req.params.cno)==3 && cat3>=pend3+inc) {
   myquery = { "matchNumber": Number(req.params.matchNO),
@@ -243,7 +243,7 @@ newvalues = {
 };
 }
 if(Number(req.params.cno)==3 && cat3< (pend3+inc)){
-  //console.log("TICKET SOLDOUT IN CATEGORY 3")
+  console.log("TICKET SOLDOUT IN CATEGORY 3")
 }
 //console.log(Number(myquery._id.availability.category1.count))
  
@@ -251,7 +251,7 @@ if(Number(req.params.cno)==3 && cat3< (pend3+inc)){
    .collection("shopMasterlist")
    .updateOne(myquery, newvalues, function (err, res) {
      if (err) throw err;
-     //console.log("1 document updated for reservation");
+     console.log("1 document updated for reservation");
      response.json(res);
    });
 });
@@ -298,7 +298,7 @@ newvalues = {
    .collection("shopMasterlist")
    .updateOne(myquery, newvalues, function (err, res) {
      if (err) throw err;
-     //console.log("1 document updated for reservation");
+     console.log("1 document updated for reservation");
      response.json(res);
    });
 });
@@ -308,7 +308,7 @@ reserveRoutes.route("/api/remove/:id").delete((req, response) => {
  let myquery = { _id: ObjectId(req.params.id) };
  db_connect.collection("Reservations").deleteOne(myquery, function (err, obj) {
    if (err) throw err;
-   //console.log("1 document deleted");
+   console.log("1 document deleted");
    response.json(obj);
  });
 });
@@ -318,6 +318,6 @@ app.listen(port, () => {
     if (err) console.error(err);
  
   });
- // console.log(`Server is running on port: ${port}`);
+  console.log(`Server is running on port: ${port}`);
 });
-//module.exports = reserveRoutes;
+module.exports = reserveRoutes;
