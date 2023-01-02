@@ -36,17 +36,19 @@ reserveRoutes.route("/api/record/:id").get(function (req, res) {
      res.json(result);
    });
 });
-reserveRoutes.route("/api/records").get(function (req, res) {
-  // let db_connect = dbo.getDb("worldcup22");
-  // db_connect
-  //   .collection("shopMasterlist")
-  //   .find({})
-  //   .toArray(function (err, result) {
-  //     if (err) throw err;
-  //     console.log("get request in record")
-  //     res.json(result);
-  //   });
-  res.send("problem in db")
+reserveRoutes.route("/api/records").get( async function (req, res) {
+  await dbo.connectToServer(function (err) {
+    if (err) console.error(err);
+    let db_connect = dbo.getDb("worldcup22");
+    db_connect.collection("shopMasterlist").find({})
+      .toArray(function (err, result) {
+        if (err) throw err;
+        console.log("get request in record")
+        res.json(result);
+      });
+  });
+  
+  //res.send("problem in db")
  });
 // This section will help you create a new record.
 reserveRoutes.route("/api/matches").post(function (req, response) {
@@ -315,10 +317,7 @@ reserveRoutes.route("/api/remove/:id").delete((req, response) => {
 });
 app.listen(port, () => {
   // perform a database connection when server starts
-  dbo.connectToServer(function (err) {
-    if (err) console.error(err);
- 
-  });
+  
   console.log(`Server is running on port: ${port}`);
 });
 app.use(reserveRoutes)
