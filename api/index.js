@@ -20,7 +20,7 @@ const reserveRoutes = express.Router();
 // This section will help you get a single record by id
 const limiter = rateLimit({
 	windowMs: 1 * 60 * 1000,
-	max: 3, 
+	max: 100, 
 	standardHeaders: true, 
 	legacyHeaders: false, 
 }) 
