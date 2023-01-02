@@ -1,18 +1,18 @@
 const express = require("express");
 const dbo = require("../db/conn");
-//const app = express();
+const app = express();
 const cors = require("cors");
 require("dotenv").config({ path: "./config.env" });
 const port = 5000;
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const rateLimit = require('express-rate-limit')
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /record.
-const reserveRoutes = express()
-reserveRoutes.use(cors());
-reserveRoutes.use(express.json());
-reserveRoutes.use(express.urlencoded({ extended: false }));
+const reserveRoutes = express.Router();
 
 // This will help us connect to the database
 // This help convert the id from string to ObjectId for the _id.
@@ -36,7 +36,7 @@ reserveRoutes.route("/api/record/:id").get(function (req, res) {
      res.json(result);
    });
 });
-reserveRoutes.route("/api/records").get(function (req, res) {
+reserveRoutes.route("/records").get(function (req, res) {
   let db_connect = dbo.getDb("worldcup22");
   db_connect
     .collection("shopMasterlist")
@@ -312,7 +312,7 @@ reserveRoutes.route("/api/remove/:id").delete((req, response) => {
    response.json(obj);
  });
 });
-reserveRoutes.listen(port, () => {
+app.listen(port, () => {
   // perform a database connection when server starts
   dbo.connectToServer(function (err) {
     if (err) console.error(err);
@@ -320,4 +320,5 @@ reserveRoutes.listen(port, () => {
   });
   console.log(`Server is running on port: ${port}`);
 });
+app.use(reserveRoutes)
 //module.exports = reserveRoutes;
