@@ -26,15 +26,18 @@ const limiter = rateLimit({
 }) 
 reserveRoutes.use(limiter)
 
-reserveRoutes.route("/api/record/:id").get(function (req, res) {
- let db_connect = dbo.getDb();
- let myquery = { _id: ObjectId(req.params.id) };
- db_connect
-   .collection("records")
-   .findOne(myquery, function (err, result) {
-     if (err) throw err;
-     res.json(result);
-   });
+reserveRoutes.route("/api/record/:id").get( async function (req, res) {
+  await dbo.connectToServer(function(err){
+    let db_connect = dbo.getDb("worldcup22");
+    let myquery = { matchNumber: Number(req.params.id) };
+    db_connect
+      .collection("shopMasterlist")
+      .findOne(myquery, function (err, result) {
+        if (err) throw err;
+        res.json(result);
+      });
+  })
+ 
 });
 
 reserveRoutes.route("/api/records").get( async function (req, res) {
