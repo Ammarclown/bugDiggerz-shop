@@ -1,6 +1,6 @@
 const express = require("express");
 const dbo = require("../db/conn");
-const app = express();
+//const app = express();
 const cors = require("cors");
 require("dotenv").config({ path: "./config.env" });
 const port = 5000;
@@ -9,7 +9,7 @@ const rateLimit = require('express-rate-limit')
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /record.
-const reserveRoutes = express.Router();
+const reserveRoutes = express()
 reserveRoutes.use(cors());
 reserveRoutes.use(express.json());
 reserveRoutes.use(express.urlencoded({ extended: false }));
@@ -312,7 +312,7 @@ reserveRoutes.route("/api/remove/:id").delete((req, response) => {
    response.json(obj);
  });
 });
-app.listen(port, () => {
+reserveRoutes.listen(port, () => {
   // perform a database connection when server starts
   dbo.connectToServer(function (err) {
     if (err) console.error(err);
@@ -320,5 +320,4 @@ app.listen(port, () => {
   });
   console.log(`Server is running on port: ${port}`);
 });
-app.use(reserveRoutes)
 //module.exports = reserveRoutes;
