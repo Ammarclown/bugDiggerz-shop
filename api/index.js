@@ -12,7 +12,7 @@ const rateLimit = require('express-rate-limit')
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /record.
-const reserveRoutes = express.Router();
+//const reserveRoutes = express.Router();
 
 // This will help us connect to the database
 // This help convert the id from string to ObjectId for the _id.
@@ -24,9 +24,9 @@ const limiter = rateLimit({
 	standardHeaders: true, 
 	legacyHeaders: false, 
 }) 
-reserveRoutes.use(limiter)
+app.use(limiter)
 
-reserveRoutes.route("/api/record/:id").get(function (req, res) {
+app.get("/api/record/:id", async function (req, res) {
  let db_connect = dbo.getDb();
  let myquery = { _id: ObjectId(req.params.id) };
  db_connect
@@ -36,7 +36,7 @@ reserveRoutes.route("/api/record/:id").get(function (req, res) {
      res.json(result);
    });
 });
-reserveRoutes.route("/api/records").get(function (req, res) {
+app.get("/api/records",async function (req, res) {
   let db_connect = dbo.getDb("worldcup22");
   db_connect
     .collection("shopMasterlist")
@@ -48,7 +48,7 @@ reserveRoutes.route("/api/records").get(function (req, res) {
     });
  });
 // This section will help you create a new record.
-reserveRoutes.route("/api/matches").post(function (req, response) {
+app.post("/api/matches",async function (req, response) {
   let db_connect = dbo.getDb("worldcup22");
   mno=Number(req.body.matchNumber)
   image=""
@@ -137,7 +137,7 @@ reserveRoutes.route("/api/matches").post(function (req, response) {
  });
  
 // This section will help you update a record by id.
-reserveRoutes.route("/api/reserved/:matchNO/:cno/:capacity").patch(function (req, response) {
+app.patch("/api/reserved/:matchNO/:cno/:capacity", async function (req, response) {
   let decrement=Number(req.params.capacity)*-1
  let db_connect = dbo.getDb("worldcup22");
  let myquery = { "matchNumber": Number(req.params.matchNO),
@@ -189,7 +189,7 @@ newvalues = {
    });
 });
 
-reserveRoutes.route("/api/pending/:matchNO/:cno/:capacity").patch(async function (req, response) {
+app.patch("/api/pending/:matchNO/:cno/:capacity", async function (req, response) {
   let inc=Number(req.params.capacity)
  let db_connect = dbo.getDb("worldcup22");
  const store= await db_connect.collection("shopMasterlist").findOne({
@@ -256,7 +256,7 @@ if(Number(req.params.cno)==3 && cat3< (pend3+inc)){
    });
 });
  //ADD QUANTITY WHEN TICKET CANCELLED
-reserveRoutes.route("/api/cancel/:matchNO/:cno/:capacity").patch(function (req, response) {
+app.patch("/api/cancel/:matchNO/:cno/:capacity", async function (req, response) {
   let decrement=Number(req.params.capacity)*-1
  let db_connect = dbo.getDb("worldcup22");
  let myquery = { "matchNumber": Number(req.params.matchNO),
@@ -303,15 +303,15 @@ newvalues = {
    });
 });
 // This section will help you delete a record
-reserveRoutes.route("/api/remove/:id").delete((req, response) => {
- let db_connect = dbo.getDb("worldcup22");
- let myquery = { _id: ObjectId(req.params.id) };
- db_connect.collection("Reservations").deleteOne(myquery, function (err, obj) {
-   if (err) throw err;
-   console.log("1 document deleted");
-   response.json(obj);
- });
-});
+// reserveRoutes.route("/api/remove/:id").delete((req, response) => {
+//  let db_connect = dbo.getDb("worldcup22");
+//  let myquery = { _id: ObjectId(req.params.id) };
+//  db_connect.collection("Reservations").deleteOne(myquery, function (err, obj) {
+//    if (err) throw err;
+//    console.log("1 document deleted");
+//    response.json(obj);
+//  });
+// });
 app.listen(port, () => {
   // perform a database connection when server starts
   dbo.connectToServer(function (err) {
@@ -320,6 +320,6 @@ app.listen(port, () => {
   });
   console.log(`Server is running on port: ${port}`);
 });
-app.use(reserveRoutes);
+//app.use(reserveRoutes);
 
-module.exports = reserveRoutes;
+//module.exports = reserveRoutes;
