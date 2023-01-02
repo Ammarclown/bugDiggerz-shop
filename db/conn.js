@@ -14,7 +14,7 @@ module.exports = {
       if (db)
       {
         _db = db.db("worldcup22");
-        console.log("Successfully connected to MongoDB."); 
+       // console.log("Successfully connected to MongoDB."); 
       }
       return callback(err);
          });
