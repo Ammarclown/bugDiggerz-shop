@@ -36,7 +36,7 @@ reserveRoutes.route("/api/record/:id").get(function (req, res) {
      res.json(result);
    });
 });
-reserveRoutes.route("/api/record").get(function (req, res) {
+reserveRoutes.route("/api/records").get(function (req, res) {
   let db_connect = dbo.getDb("worldcup22");
   db_connect
     .collection("shopMasterlist")
