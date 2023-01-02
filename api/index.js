@@ -4,15 +4,15 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config({ path: "./config.env" });
 const port = 5000;
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 const rateLimit = require('express-rate-limit')
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /record.
 const reserveRoutes = express.Router();
+reserveRoutes.use(cors());
+reserveRoutes.use(express.json());
+reserveRoutes.use(express.urlencoded({ extended: false }));
 
 // This will help us connect to the database
 // This help convert the id from string to ObjectId for the _id.
