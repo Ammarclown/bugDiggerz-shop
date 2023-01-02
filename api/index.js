@@ -36,6 +36,7 @@ reserveRoutes.route("/api/record/:id").get(function (req, res) {
      res.json(result);
    });
 });
+
 reserveRoutes.route("/api/records").get( async function (req, res) {
   await dbo.connectToServer(function (err) {
     if (err) console.error(err);
@@ -144,7 +145,9 @@ reserveRoutes.route("/api/matches").post( async function (req, response) {
  });
  
 // This section will help you update a record by id.
-reserveRoutes.route("/api/reserved/:matchNO/:cno/:capacity").patch(function (req, response) {
+reserveRoutes.route("/api/reserved/:matchNO/:cno/:capacity").patch( async function (req, response) {
+  await dbo.connectToServer(function(err){
+  if(err) console.error(err)
   let decrement=Number(req.params.capacity)*-1
  let db_connect = dbo.getDb("worldcup22");
  let myquery = { "matchNumber": Number(req.params.matchNO),
@@ -193,11 +196,15 @@ newvalues = {
      if (err) throw err;
      console.log("1 document updated for reservation");
      response.json(res);
-   });
+   })
+  })
+  ;
 });
 
 reserveRoutes.route("/api/pending/:matchNO/:cno/:capacity").patch(async function (req, response) {
-  let inc=Number(req.params.capacity)
+  await dbo.connectToServer(async function(err){
+    if(err) console.error(err)
+    let inc=Number(req.params.capacity)
  let db_connect = dbo.getDb("worldcup22");
  const store= await db_connect.collection("shopMasterlist").findOne({
   matchNumber:Number(req.params.matchNO)
@@ -262,52 +269,58 @@ if(Number(req.params.cno)==3 && cat3< (pend3+inc)){
      response.json(res);
    });
 });
+  })
+  
  //ADD QUANTITY WHEN TICKET CANCELLED
-reserveRoutes.route("/api/cancel/:matchNO/:cno/:capacity").patch(function (req, response) {
-  let decrement=Number(req.params.capacity)*-1
- let db_connect = dbo.getDb("worldcup22");
- let myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category1.price":75 };
-let newvalues = {
-  $inc: {
-   "availability.category1.pending":0
-  },
-};
-if (Number(req.params.cno)==1){
-  myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category1.price":75 };
-newvalues = {
-  $inc: {
-   "availability.category1.pending":decrement
-  },
-};
-}
-else if(Number(req.params.cno)==2){
-  myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category2.price":125 };
-newvalues = {
-  $inc: {
-   "availability.category2.pending":decrement
-  },
-};
-}
-else {
-  myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category3.price":195 };
-newvalues = {
-  $inc: {
-   "availability.category3.pending":decrement
-  },
-};
-}
+reserveRoutes.route("/api/cancel/:matchNO/:cno/:capacity").patch(async function (req, response) {
+  await dbo.connectToServer(function(err){
+    if(err)console.error(err)
+    let decrement=Number(req.params.capacity)*-1
+    let db_connect = dbo.getDb("worldcup22");
+    let myquery = { "matchNumber": Number(req.params.matchNO),
+   "availability.category1.price":75 };
+   let newvalues = {
+     $inc: {
+      "availability.category1.pending":0
+     },
+   };
+   if (Number(req.params.cno)==1){
+     myquery = { "matchNumber": Number(req.params.matchNO),
+   "availability.category1.price":75 };
+   newvalues = {
+     $inc: {
+      "availability.category1.pending":decrement
+     },
+   };
+   }
+   else if(Number(req.params.cno)==2){
+     myquery = { "matchNumber": Number(req.params.matchNO),
+   "availability.category2.price":125 };
+   newvalues = {
+     $inc: {
+      "availability.category2.pending":decrement
+     },
+   };
+   }
+   else {
+     myquery = { "matchNumber": Number(req.params.matchNO),
+   "availability.category3.price":195 };
+   newvalues = {
+     $inc: {
+      "availability.category3.pending":decrement
+     },
+   };
+   }
+    
+    db_connect
+      .collection("shopMasterlist")
+      .updateOne(myquery, newvalues, function (err, res) {
+        if (err) throw err;
+        console.log("1 document updated for reservation");
+        response.json(res);
+      });
+  })
  
- db_connect
-   .collection("shopMasterlist")
-   .updateOne(myquery, newvalues, function (err, res) {
-     if (err) throw err;
-     console.log("1 document updated for reservation");
-     response.json(res);
-   });
 });
 // This section will help you delete a record
 reserveRoutes.route("/api/remove/:id").delete((req, response) => {
