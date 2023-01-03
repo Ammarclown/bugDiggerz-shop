@@ -18,13 +18,13 @@ const reserveRoutes = express.Router();
 // This help convert the id from string to ObjectId for the _id.
 //const ObjectId = require("mongodb").ObjectId;
 // This section will help you get a single record by id
-const limiter = rateLimit({
-	windowMs: 1 * 60 * 1000,
-	max: 100, 
-	standardHeaders: true, 
-	legacyHeaders: false, 
-}) 
-reserveRoutes.use(limiter)
+// const limiter = rateLimit({
+// 	windowMs: 1 * 60 * 1000,
+// 	max: 100, 
+// 	standardHeaders: true, 
+// 	legacyHeaders: false, 
+// }) 
+// reserveRoutes.use(limiter)
 
 reserveRoutes.route("/api/record/:id").get( async function (req, res) {
   await dbo.connectToServer(function(err){
