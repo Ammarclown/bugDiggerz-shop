@@ -26,7 +26,7 @@ const reserveRoutes = express.Router();
 // }) 
 // reserveRoutes.use(limiter)
 
-reserveRoutes.route("/api/record/:id").get( async function (req, res) {
+reserveRoutes.route("/api/records/:id").get( async function (req, res) {
   await dbo.connectToServer(function(err){
     let db_connect = dbo.getDb("worldcup22");
     let myquery = { matchNumber: Number(req.params.id) };
