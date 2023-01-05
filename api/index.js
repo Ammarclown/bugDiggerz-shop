@@ -166,8 +166,7 @@ reserveRoutes.route("/api/reserved/:matchNO/:cno/:capacity").patch( async functi
   if(err) console.error(err)
   let decrement=Number(req.params.capacity)*-1
  let db_connect = dbo.getDb("worldcup22");
- let myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category1.price":75 };
+ let myquery = { "matchNumber": Number(req.params.matchNO) };
 let newvalues = {
   $inc: {
     "availability.category1.available":decrement,
@@ -175,8 +174,7 @@ let newvalues = {
   },
 };
 if (Number(req.params.cno)==1){
-  myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category1.price":75 };
+  myquery = { "matchNumber": Number(req.params.matchNO),};
 newvalues = {
   $inc: {
     "availability.category1.available":decrement,
@@ -185,8 +183,7 @@ newvalues = {
 };
 }
 else if(Number(req.params.cno)==2){
-  myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category2.price":125 };
+  myquery = { "matchNumber": Number(req.params.matchNO), };
 newvalues = {
   $inc: {
     "availability.category2.available":decrement,
@@ -195,8 +192,7 @@ newvalues = {
 };
 }
 else {
-  myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category3.price":195 };
+  myquery = { "matchNumber": Number(req.params.matchNO) };
 newvalues = {
   $inc: {
     "availability.category3.available":decrement,
@@ -232,16 +228,14 @@ reserveRoutes.route("/api/pending/:matchNO/:cno/:capacity").patch(async function
  const pend2=Number(store.availability.category2.pending)
  const pend3=Number(store.availability.category3.pending)
  
- let myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category1.price":75 };
+ let myquery = { "matchNumber": Number(req.params.matchNO) };
 let newvalues = {
   $inc: {
    "availability.category1.pending":0
   },
 };
 if (Number(req.params.cno)==1 && cat1>= (pend1+inc)){
-  myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category1.price":75 };
+  myquery = { "matchNumber": Number(req.params.matchNO) };
 newvalues = {
   $inc: {
    "availability.category1.pending":inc
@@ -252,8 +246,7 @@ if(Number(req.params.cno)==1 && cat1< (pend1+inc)){
   console.log("TICKET SOLDOUT IN CATEGORY 1")
 }
 if(Number(req.params.cno)==2 && cat2>=pend2+inc){
-  myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category2.price":125 };
+  myquery = { "matchNumber": Number(req.params.matchNO) };
 newvalues = {
   $inc: {
    "availability.category2.pending":inc
@@ -264,8 +257,7 @@ if(Number(req.params.cno)==2 && cat2< (pend2+inc)){
   console.log("TICKET SOLDOUT IN CATEGORY 2")
 }
 if(Number(req.params.cno)==3 && cat3>=pend3+inc) {
-  myquery = { "matchNumber": Number(req.params.matchNO),
-"availability.category3.price":195 };
+  myquery = { "matchNumber": Number(req.params.matchNO)};
 newvalues = {
   $inc: {
    "availability.category3.pending":inc
@@ -293,16 +285,14 @@ reserveRoutes.route("/api/cancel/:matchNO/:cno/:capacity").patch(async function 
     if(err)console.error(err)
     let decrement=Number(req.params.capacity)*-1
     let db_connect = dbo.getDb("worldcup22");
-    let myquery = { "matchNumber": Number(req.params.matchNO),
-   "availability.category1.price":75 };
+    let myquery = { "matchNumber": Number(req.params.matchNO)};
    let newvalues = {
      $inc: {
       "availability.category1.pending":0
      },
    };
    if (Number(req.params.cno)==1){
-     myquery = { "matchNumber": Number(req.params.matchNO),
-   "availability.category1.price":75 };
+     myquery = { "matchNumber": Number(req.params.matchNO)};
    newvalues = {
      $inc: {
       "availability.category1.pending":decrement
@@ -310,8 +300,7 @@ reserveRoutes.route("/api/cancel/:matchNO/:cno/:capacity").patch(async function 
    };
    }
    else if(Number(req.params.cno)==2){
-     myquery = { "matchNumber": Number(req.params.matchNO),
-   "availability.category2.price":125 };
+     myquery = { "matchNumber": Number(req.params.matchNO)};
    newvalues = {
      $inc: {
       "availability.category2.pending":decrement
@@ -319,8 +308,7 @@ reserveRoutes.route("/api/cancel/:matchNO/:cno/:capacity").patch(async function 
    };
    }
    else {
-     myquery = { "matchNumber": Number(req.params.matchNO),
-   "availability.category3.price":195 };
+     myquery = { "matchNumber": Number(req.params.matchNO)};
    newvalues = {
      $inc: {
       "availability.category3.pending":decrement
