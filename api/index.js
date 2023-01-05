@@ -43,7 +43,7 @@ reserveRoutes.route("/api/records/:id").get( async function (req, res) {
 reserveRoutes.route("/api/tickets/:id").get( async function (req, res) {
   await dbo.connectToServer(function(err){
     let db_connect = dbo.getDb("worldcup22");
-    let myquery = { matchNumber: Number(req.params.id) };
+    let myquery = { id: req.params.id };
     db_connect
       .collection("Reservations")
       .findOne(myquery, function (err, result) {
