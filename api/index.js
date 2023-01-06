@@ -132,19 +132,19 @@ reserveRoutes.route("/api/matches").post( async function (req, response) {
      location: req.body.location,
      availability: {
        category1: {
-         available: req.body.available,
-         pending: req.body.pending,
-         price: req.body.price
+         available: req.body.availability.category1.available,
+         pending: req.body.availability.category1.pending,
+         price: req.body.availability.category1.price
        },
        category2: {
-         available: req.body.available,
-         pending: req.body.pending,
-         price: req.body.price
+         available: req.body.availability.category2.available,
+         pending:req.body.availability.category2.pending,
+         price: req.body.availability.category2.price
        },
        category3: {
-         available: req.body.available,
-         pending: req.body.pending,
-         price: req.body.price
+        available: req.body.availability.category3.available,
+        pending:req.body.availability.category3.pending,
+        price: req.body.availability.category3.price
        }            
      },
      homeTeam: req.body.homeTeam,
