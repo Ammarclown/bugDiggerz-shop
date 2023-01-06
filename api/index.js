@@ -152,7 +152,7 @@ reserveRoutes.route("/api/matches").post( async function (req, response) {
      image:image,
      group: req.body.group
     };
-    db_connect.collection("updatedMasterlist").insertOne(myobj, function (err, res) {
+    db_connect.collection("shopMasterlist").insertOne(myobj, function (err, res) {
       if (err) throw err;
       response.json(res);
     });
