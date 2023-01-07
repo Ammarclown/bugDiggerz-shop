@@ -42,13 +42,13 @@ const rateLimit = require('express-rate-limit')
 // This help convert the id from string to ObjectId for the _id.
 //const ObjectId = require("mongodb").ObjectId;
 // This section will help you get a single record by id
-// const limiter = rateLimit({
-// 	windowMs: 1 * 60 * 1000,
-// 	max: 100, 
-// 	standardHeaders: true, 
-// 	legacyHeaders: false, 
-// }) 
-// reserveRoutes.use(limiter)
+const limiter = rateLimit({
+	windowMs: 1 * 60 * 1000,
+	max: 100, 
+	standardHeaders: true, 
+	legacyHeaders: false, 
+}) 
+reserveRoutes.use(limiter)
 
 reserveRoutes.route("/api/records/:id").get( async function (req, res) {
   await dbo.connectToServer(function(err){
@@ -186,18 +186,27 @@ reserveRoutes.route("/api/matches").post( async function (req, response) {
  
 // This section will help you update a record by id.
 reserveRoutes.route("/api/reserved/:matchNO/:cno/:capacity").patch( async function (req, response) {
-  await dbo.connectToServer(function(err){
+  await dbo.connectToServer(async function(err){
   if(err) console.error(err)
   let decrement=Number(req.params.capacity)*-1
  let db_connect = dbo.getDb("worldcup22");
+ const store= await db_connect.collection("shopMasterlist").findOne({
+  matchNumber:Number(req.params.matchNO)
+ })
+ const cat1=Number(store.availability.category1.available)
+ const cat2=Number(store.availability.category2.available)
+ const cat3=Number(store.availability.category3.available)
+ const pend1=Number(store.availability.category1.pending)
+ const pend2=Number(store.availability.category2.pending)
+ const pend3=Number(store.availability.category3.pending)
  let myquery = { "matchNumber": Number(req.params.matchNO) };
 let newvalues = {
   $inc: {
-    "availability.category1.available":decrement,
-   "availability.category1.pending":decrement,
+    "availability.category1.available":0,
+   "availability.category1.pending":0,
   },
 };
-if (Number(req.params.cno)==1){
+if (Number(req.params.cno)==1 && (pend1+decrement)>=0){
   myquery = { "matchNumber": Number(req.params.matchNO),};
 newvalues = {
   $inc: {
@@ -206,7 +215,7 @@ newvalues = {
   },
 };
 }
-else if(Number(req.params.cno)==2){
+if(Number(req.params.cno)==2 && (pend2+decrement)>=0){
   myquery = { "matchNumber": Number(req.params.matchNO), };
 newvalues = {
   $inc: {
@@ -215,7 +224,7 @@ newvalues = {
   },
 };
 }
-else {
+if(Number(req.params.cno)==3 && (pend3+decrement)>=0){
   myquery = { "matchNumber": Number(req.params.matchNO) };
 newvalues = {
   $inc: {
@@ -224,6 +233,15 @@ newvalues = {
   },
 };
 }
+// else {
+//   myquery = { "matchNumber": Number(req.params.matchNO) };
+// newvalues = {
+//   $inc: {
+//     "availability.category3.available":decrement,
+//    "availability.category3.pending":decrement,
+//   },
+// };
+// }
 //console.log(Number(myquery._id.availability.category1.count))
  
  db_connect
@@ -305,10 +323,22 @@ if(Number(req.params.cno)==3 && cat3< (pend3+inc)){
   
  //ADD QUANTITY WHEN TICKET CANCELLED
 reserveRoutes.route("/api/cancel/:matchNO/:cno/:capacity").patch(async function (req, response) {
-  await dbo.connectToServer(function(err){
+  await dbo.connectToServer(async function(err){
     if(err)console.error(err)
     let decrement=Number(req.params.capacity)*-1
     let db_connect = dbo.getDb("worldcup22");
+    const store= await db_connect.collection("shopMasterlist").findOne({
+      matchNumber:Number(req.params.matchNO)
+     })
+    //  const cat1=Number(store.availability.category1.available)
+    //  const cat2=Number(store.availability.category2.available)
+    //  const cat3=Number(store.availability.category3.available)
+     const pend1=Number(store.availability.category1.pending)
+     const pend2=Number(store.availability.category2.pending)
+     const pend3=Number(store.availability.category3.pending)
+     const result1=pend1+decrement
+     const result2=pend2+decrement
+     const result3=pend3+decrement
     let myquery = { "matchNumber": Number(req.params.matchNO)};
    let newvalues = {
      $inc: {
@@ -316,28 +346,60 @@ reserveRoutes.route("/api/cancel/:matchNO/:cno/:capacity").patch(async function 
      },
    };
    if (Number(req.params.cno)==1){
-     myquery = { "matchNumber": Number(req.params.matchNO)};
-   newvalues = {
-     $inc: {
-      "availability.category1.pending":decrement
-     },
-   };
+    if(result1>=0){
+      myquery = { "matchNumber": Number(req.params.matchNO)};
+      newvalues = {
+        $inc: {
+         "availability.category1.pending":decrement
+        },
+      };
+    }
+     else{
+      myquery = { "matchNumber": Number(req.params.matchNO)};
+      newvalues = {
+        $set: {
+         "availability.category1.pending":0
+        },
+      };
+     }
    }
-   else if(Number(req.params.cno)==2){
-     myquery = { "matchNumber": Number(req.params.matchNO)};
+  if(Number(req.params.cno)==2){
+    if(result2>=0){
+      myquery = { "matchNumber": Number(req.params.matchNO)};
    newvalues = {
      $inc: {
       "availability.category2.pending":decrement
      },
    };
-   }
-   else {
-     myquery = { "matchNumber": Number(req.params.matchNO)};
+    }
+     else{
+      myquery = { "matchNumber": Number(req.params.matchNO)};
    newvalues = {
-     $inc: {
-      "availability.category3.pending":decrement
+     $set: {
+      "availability.category2.pending":0
      },
    };
+     }
+     
+   }
+   if(Number(req.params.cno)==3) {
+    if(result3>=0){
+      myquery = { "matchNumber": Number(req.params.matchNO)};
+      newvalues = {
+        $inc: {
+         "availability.category3.pending":decrement
+        },
+      };
+    }
+     else{
+      myquery = { "matchNumber": Number(req.params.matchNO)};
+   newvalues = {
+     $set: {
+      "availability.category3.pending":0
+     },
+   };
+     }
+     
    }
     
     db_connect
