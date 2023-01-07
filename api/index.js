@@ -18,15 +18,16 @@ const checkBlacklist = function(req, res, next) {
     next();
   }
 }
-app.use(checkBlacklist);
+// app.use(checkBlacklist);
 const reserveRoutes = express.Router();
+reserveRoutes.use(checkBlacklist)
 const cors = require("cors");
 require("dotenv").config({ path: "./config.env" });
 const port = 5000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use((err, req, res, next) => {
+reserveRoutes.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.send("Your IP is Blocked!");
 });
@@ -49,7 +50,6 @@ const rateLimit = require('express-rate-limit')
 // reserveRoutes.use(limiter)
 
 reserveRoutes.route("/api/records/:id").get( async function (req, res) {
-  reserveRoutes.use(checkBlacklist)
   await dbo.connectToServer(function(err){
     let db_connect = dbo.getDb("worldcup22");
     let myquery = { matchNumber: Number(req.params.id) };
